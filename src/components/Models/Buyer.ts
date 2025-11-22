@@ -45,12 +45,9 @@ export class Buyer {
 
   validate(): { [key: string]: string } {
     const errors: { [key: string]: string } = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!this.payment) errors.payment = "Не выбран вид оплаты";
     if (!this.email) errors.email = "Укажите email";
-    else if (!emailRegex.test(this.email))
-      errors.email = "Неверный формат email";
     if (!this.phone) errors.phone = "Укажите телефон";
     if (!this.address) errors.address = "Укажите адрес";
 

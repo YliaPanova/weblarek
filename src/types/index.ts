@@ -32,8 +32,7 @@ export interface ApiResponse {
   items: IProduct[];
 }
 
-export interface IOrder {
-  buyer: IBuyer;
-  cartItems: IProduct[];
-  totalPrice: number;
+export interface IOrder extends IBuyer {
+  items: string[];
+  total: number;
 }
