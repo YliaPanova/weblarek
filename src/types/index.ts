@@ -36,3 +36,28 @@ export interface IOrder extends IBuyer {
   items: string[];
   total: number;
 }
+
+// Дополнительные типы для событий
+export interface ProductSelectEvent {
+  product: IProduct;
+}
+
+export interface BasketRemoveEvent {
+  product: IProduct;
+}
+
+export interface PaymentChangeEvent {
+  payment: string;
+}
+
+export interface AddressChangeEvent {
+  address: string;
+}
+
+export interface EmailChangeEvent {
+  email: string;
+}
+
+export interface PhoneChangeEvent {
+  phone: string;
+}

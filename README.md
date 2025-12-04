@@ -227,3 +227,51 @@ Presenter - презентер содержит основную логику п
 **Presenter** (Посредник):
 - DataService - связывает модели с API
 - Координирует взаимодействие между View и Model
+
+
+src
+├──common.blocks
+├──components/
+│ └── Models/
+│   │ ├── Buyer.ts
+│   │ ├── ProductCatalog.ts
+│   │ └── ShoppingCart.ts
+│ └── Service/
+│   │ ├── Api.ts
+│   │ └── DataService.ts
+│ └── base/
+│   │ ├── Api.ts
+│   │ ├── Component.ts
+│   │ └── Events.ts
+│ └── view/
+│   │ └── Cards/
+│   │   │ ├── Card.ts
+│   │   │ ├── CardCatalog.ts
+│   │   │ └── CardPreview.ts
+│   │   │ └── CardShoppingCart.ts
+│   │ └── Forms/
+│   │   │ ├── ContactForm.ts
+│   │   │ ├── Form.ts
+│   │   │ └── OrderForm.ts
+│   ├── Basket.ts
+│   ├── Success.ts
+│   ├── Header.ts
+│   └── Gallery.ts
+│   └── Model.ts
+│   └── Page.ts
+│   └── ShoppingCartView.ts
+├── images
+├── pages/
+│ └── index.html
+├── public
+├── scss
+├── types/
+│ └── index.ts
+├── utils
+├── vendor
+├── main.ts
+└── vite-end.d.ts
+index.html
+package-lock.json
+package.json
+README.md
