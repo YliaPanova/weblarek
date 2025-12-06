@@ -1,4 +1,4 @@
-import { IApi, IProduct, ApiResponse, IOrder, IBuyer } from "../../types";
+import { IApi, IProduct, ApiResponse, IOrder } from "../../types";
 
 export class DataService {
   private api: IApi;
