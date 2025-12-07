@@ -6,11 +6,18 @@ export class DataService {
   constructor(api: IApi) {
     this.api = api;
   }
+
   async getProducts(): Promise<IProduct[]> {
     try {
-      const response: ApiResponse = await this.api.get<ApiResponse>(
-        "/product/"
-      );
+      console.log("Loading products from API...");
+      const response: ApiResponse = await this.api.get<ApiResponse>("/product");
+      console.log("API Response received:", response);
+
+      if (!response.items) {
+        console.warn("No items in response, returning empty array");
+        return [];
+      }
+
       return response.items;
     } catch (error) {
       console.error("Ошибка при загрузке товаров:", error);
@@ -23,7 +30,7 @@ export class DataService {
   ): Promise<{ success: boolean; orderId?: string; total?: number }> {
     try {
       const response = await this.api.post<{ id: string; total: number }>(
-        "/order/",
+        "/order",
         orderData
       );
 

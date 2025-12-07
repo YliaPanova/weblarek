@@ -54,7 +54,10 @@ export function cloneTemplate<T extends HTMLElement>(
   query: string | HTMLTemplateElement
 ): T {
   const template = ensureElement(query) as HTMLTemplateElement;
-  if (!template.content.firstElementChild) {
+  if (!template) {
+    throw new Error(`Template not found: ${query}`);
+  }
+  if (!template.content || !template.content.firstElementChild) {
     throw new Error(`Template ${query} has no content`);
   }
   return template.content.firstElementChild.cloneNode(true) as T;

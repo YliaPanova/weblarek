@@ -1,11 +1,13 @@
 import { IProduct } from "../../types";
+import { EventEmitter } from "../base/Events";
 
-export class ProductCatalog {
+export class ProductCatalog extends EventEmitter {
   private products: IProduct[] = [];
   private selectedProduct: IProduct | null = null;
 
   setProducts(products: IProduct[]): void {
     this.products = products;
+    this.emit("catalog:changed");
   }
 
   getProducts(): IProduct[] {
@@ -18,6 +20,7 @@ export class ProductCatalog {
 
   setSelectedProduct(product: IProduct): void {
     this.selectedProduct = product;
+    this.emit("product:selected", { product });
   }
 
   getSelectedProduct(): IProduct | null {

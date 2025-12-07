@@ -4,7 +4,7 @@ import { IEvents } from "../base/Events";
 import { CDN_URL, categoryMap } from "../../utils/constants";
 
 interface ICardActions {
-  onClick?: (event: MouseEvent, data?: any) => void;
+  onClick?: (event: MouseEvent) => void;
 }
 
 export class ProductCard<T> extends Component<T> {
@@ -12,8 +12,6 @@ export class ProductCard<T> extends Component<T> {
   protected _title: HTMLElement;
   protected _image: HTMLImageElement | null = null;
   protected _price: HTMLElement;
-  protected _button: HTMLButtonElement | null = null;
-  protected _data: T | null = null;
 
   constructor(
     protected events: IEvents,
@@ -26,31 +24,21 @@ export class ProductCard<T> extends Component<T> {
     this._title = ensureElement<HTMLElement>(".card__title", container);
     this._image = container.querySelector(".card__image");
     this._price = ensureElement<HTMLElement>(".card__price", container);
-    this._button = container.querySelector(".card__button");
 
     if (actions?.onClick) {
       const clickHandler = (event: MouseEvent) => {
         event.preventDefault();
-        actions.onClick!(event, this._data);
+        const target = event.target as HTMLElement;
+        // Не запускать обработчик, если кликнули на кнопку внутри карточки
+        if (!target.closest(".card__button")) {
+          actions.onClick!(event);
+        }
       };
 
-      if (this._button) {
-        this._button.addEventListener("click", clickHandler);
+      if (this._image) {
+        this._image.addEventListener("click", clickHandler);
       } else {
         container.addEventListener("click", clickHandler);
-      }
-    }
-  }
-
-  protected setImage(
-    element: HTMLImageElement | null,
-    src: string,
-    alt?: string
-  ): void {
-    if (element) {
-      element.src = src;
-      if (alt) {
-        element.alt = alt;
       }
     }
   }
@@ -58,10 +46,13 @@ export class ProductCard<T> extends Component<T> {
   set category(value: string) {
     if (this._category) {
       this.setText(this._category, value);
-      const categoryClass =
-        categoryMap[value as keyof typeof categoryMap] ||
-        "card__category_other";
-      this._category.className = "card__category " + categoryClass;
+
+      this._category.className = "card__category";
+
+      const categoryClass = categoryMap[value as keyof typeof categoryMap];
+      if (categoryClass) {
+        this._category.classList.add(categoryClass);
+      }
     }
   }
 
@@ -70,8 +61,19 @@ export class ProductCard<T> extends Component<T> {
   }
 
   set image(value: string) {
-    if (this._image) {
-      this.setImage(this._image, `${CDN_URL}/${value}`);
+    if (this._image && value) {
+      const fullImageUrl = value.startsWith("http")
+        ? value
+        : `${CDN_URL}/${value}`;
+      console.log(`Setting image: ${fullImageUrl}`);
+      this._image.src = fullImageUrl;
+      this._image.alt = this._title.textContent || value;
+
+      this._image.onerror = () => {
+        console.warn(`Failed to load image: ${fullImageUrl}`);
+
+        this._image!.src = "src/images/placeholder.jpg";
+      };
     }
   }
 
@@ -80,23 +82,7 @@ export class ProductCard<T> extends Component<T> {
     this.setText(this._price, priceText);
   }
 
-  set buttonText(value: string) {
-    if (this._button) {
-      this.setText(this._button, value);
-    }
-  }
-
-  set buttonDisabled(state: boolean) {
-    if (this._button) {
-      this.setDisabled(this._button, state);
-    }
-  }
-
   render(data?: Partial<T>): HTMLElement {
-    if (data) {
-      this._data = { ...this._data, ...data } as T;
-      super.render(this._data);
-    }
-    return this.container;
+    return super.render(data);
   }
 }

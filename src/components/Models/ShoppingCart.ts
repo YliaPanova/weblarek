@@ -1,6 +1,7 @@
 import { IProduct } from "../../types";
+import { EventEmitter } from "../base/Events";
 
-export class ShoppingCart {
+export class ShoppingCart extends EventEmitter {
   private items: IProduct[] = [];
 
   getItems(): IProduct[] {
@@ -9,14 +10,24 @@ export class ShoppingCart {
 
   addItem(product: IProduct): void {
     this.items.push(product);
+    this.emit("cart:changed");
   }
 
   removeItem(product: IProduct): void {
     this.items = this.items.filter((item) => item.id !== product.id);
+    this.emit("cart:changed");
+  }
+
+  removeItemById(productId: string): void {
+    const product = this.items.find((item) => item.id === productId);
+    if (product) {
+      this.removeItem(product);
+    }
   }
 
   clear(): void {
     this.items = [];
+    this.emit("cart:changed");
   }
 
   getTotalPrice(): number {

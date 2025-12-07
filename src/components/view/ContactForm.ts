@@ -1,6 +1,6 @@
 import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
+import { Form } from "./Form";
 
 interface IContactsForm {
   email: string;
@@ -9,31 +9,19 @@ interface IContactsForm {
   errors: string[];
 }
 
-export class ContactsForm extends Component<IContactsForm> {
-  protected _form: HTMLFormElement;
+export class ContactsForm extends Form<IContactsForm> {
   protected _emailInput: HTMLInputElement;
   protected _phoneInput: HTMLInputElement;
-  protected _errors: HTMLElement;
-  protected _submitButton: HTMLButtonElement;
 
   constructor(protected events: IEvents, container: HTMLElement) {
     super(container);
 
-    this._form = ensureElement<HTMLFormElement>(
-      'form[name="contacts"]',
-      container
-    );
     this._emailInput = ensureElement<HTMLInputElement>(
       'input[name="email"]',
       container
     );
     this._phoneInput = ensureElement<HTMLInputElement>(
       'input[name="phone"]',
-      container
-    );
-    this._errors = ensureElement<HTMLElement>(".form__errors", container);
-    this._submitButton = ensureElement<HTMLButtonElement>(
-      'button[type="submit"]',
       container
     );
 
@@ -58,13 +46,5 @@ export class ContactsForm extends Component<IContactsForm> {
 
   set phone(value: string) {
     this._phoneInput.value = value;
-  }
-
-  set valid(value: boolean) {
-    this.setDisabled(this._submitButton, !value);
-  }
-
-  set errors(value: string[]) {
-    this.setText(this._errors, value.join(", "));
   }
 }

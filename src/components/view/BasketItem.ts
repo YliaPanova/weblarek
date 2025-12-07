@@ -1,10 +1,12 @@
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
-import { IProduct } from "../../types";
 
-interface IBasketItem extends IProduct {
+interface IBasketItem {
   index: number;
+  title: string;
+  price: number | null;
+  productId: string;
 }
 
 export class BasketItem extends Component<IBasketItem> {
@@ -12,8 +14,7 @@ export class BasketItem extends Component<IBasketItem> {
   protected _title: HTMLElement;
   protected _price: HTMLElement;
   protected _deleteButton: HTMLButtonElement;
-
-  protected _data: IBasketItem | null = null;
+  protected _productId: string = ""; // Инициализируем пустой строкой
 
   constructor(events: IEvents, container: HTMLElement) {
     super(container);
@@ -28,8 +29,8 @@ export class BasketItem extends Component<IBasketItem> {
 
     this._deleteButton.addEventListener("click", (event: MouseEvent) => {
       event.preventDefault();
-      if (this._data) {
-        events.emit("basket:remove", { product: this._data });
+      if (this._productId) {
+        events.emit("basket:remove", { productId: this._productId });
       }
     });
   }
@@ -47,15 +48,14 @@ export class BasketItem extends Component<IBasketItem> {
     this.setText(this._price, priceText);
   }
 
-  render(data?: Partial<IBasketItem>): HTMLElement {
-    if (data) {
-      this._data = { ...this._data, ...data } as IBasketItem;
+  set productId(value: string) {
+    this._productId = value;
+  }
 
-      // Устанавливаем значения
-      if (data.index !== undefined) this.index = data.index;
-      if (data.title !== undefined) this.title = data.title;
-      if (data.price !== undefined) this.price = data.price;
+  render(data?: Partial<IBasketItem>): HTMLElement {
+    if (data?.productId) {
+      this._productId = data.productId;
     }
-    return this.container;
+    return super.render(data);
   }
 }
