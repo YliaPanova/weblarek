@@ -36,9 +36,9 @@ const events = new EventEmitter();
 const api = new Api(API_URL);
 const dataService = new DataService(api);
 
-// Инициализация Моделей
-const catalogModel = new ProductCatalog();
-const cartModel = new ShoppingCart();
+// Инициализация Моделей с передачей EventEmitter
+const catalogModel = new ProductCatalog(events);
+const cartModel = new ShoppingCart(events);
 const buyerModel = new Buyer();
 
 // Инициализация шаблонов
@@ -67,6 +67,25 @@ let successView: Success | null = null;
 
 // Текущий просматриваемый товар
 let currentPreviewProduct: IProduct | null = null;
+
+// Функция загрузки товаров с сервера
+async function loadProducts() {
+  try {
+    console.log("Loading products from server...");
+    const products = await dataService.getProducts();
+    console.log("Products loaded:", products);
+    
+    // Обновляем модель каталога
+    catalogModel.setProducts(products);
+    
+    // Обновляем UI через событие
+    events.emit("catalog:changed");
+  } catch (error) {
+    console.error("Failed to load products:", error);
+    // Показываем сообщение об ошибке
+    gallery.catalog = [createMessageElement("Не удалось загрузить товары. Пожалуйста, попробуйте позже.")];
+  }
+}
 
 // Обработка событий каталога товаров
 events.on("catalog:changed", () => {
@@ -104,9 +123,6 @@ events.on("catalog:changed", () => {
 
     return cardView.render();
   });
-
-  gallery.catalog = catalogItems;
-  header.counter = cartModel.getItemCount();
 
   gallery.catalog = catalogItems;
   header.counter = cartModel.getItemCount();
@@ -380,3 +396,6 @@ events.on("success:close", () => {
   // Сбрасываем формы для следующего заказа
   buyerModel.clearData();
 });
+
+// Загружаем товары при запуске приложения
+loadProducts();
