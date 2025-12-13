@@ -6,7 +6,7 @@ interface IBasketItem {
   index: number;
   title: string;
   price: number | null;
-  productId: string;  // ← Храним ID для удаления
+  productId: string;
 }
 
 export class BasketItem extends Component<IBasketItem> {
@@ -14,7 +14,7 @@ export class BasketItem extends Component<IBasketItem> {
   protected _title: HTMLElement;
   protected _price: HTMLElement;
   protected _deleteButton: HTMLButtonElement;
-  protected _productId: string = "";  // ← Храним ID в классе
+  protected _productId: string = "";
 
   constructor(events: IEvents, container: HTMLElement) {
     super(container);
@@ -30,7 +30,7 @@ export class BasketItem extends Component<IBasketItem> {
     this._deleteButton.addEventListener("click", (event: MouseEvent) => {
       event.preventDefault();
       if (this._productId) {
-        events.emit("basket:remove", { productId: this._productId });  // ← Отправляем ID
+        events.emit("basket:remove", { productId: this._productId });
       }
     });
   }
@@ -49,12 +49,12 @@ export class BasketItem extends Component<IBasketItem> {
   }
 
   set productId(value: string) {
-    this._productId = value;  // ← Сеттер для ID
+    this._productId = value;
   }
 
   render(data?: Partial<IBasketItem>): HTMLElement {
     if (data?.productId) {
-      this._productId = data.productId;  // ← Сохраняем ID при рендере
+      this._productId = data.productId;
     }
     return super.render(data);
   }

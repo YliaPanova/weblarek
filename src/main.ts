@@ -27,7 +27,7 @@ import { ContactsForm } from "./components/view/ContactForm";
 import { Success } from "./components/view/Success";
 
 // Типы
-import { IOrder, TPayment } from "./types"; // ← Убираем IProduct, так как он не используется напрямую
+import { IOrder, TPayment } from "./types";
 
 // Инициализация обработчика событий
 const events = new EventEmitter();
@@ -65,8 +65,7 @@ let orderForm: OrderForm | null = null;
 let contactForm: ContactsForm | null = null;
 let successView: Success | null = null;
 
-// ID текущего просматриваемого товара (храним только ID, а не объект)
-let currentPreviewProductId: string | null = null; // ← Изменяем на хранение только ID
+let currentPreviewProductId: string | null = null;
 
 // Функция загрузки товаров
 async function loadProducts() {
@@ -74,12 +73,16 @@ async function loadProducts() {
     console.log("Loading products from server...");
     const products = await dataService.getProducts();
     console.log("Products loaded:", products);
-    
+
     catalogModel.setProducts(products);
     events.emit("catalog:changed");
   } catch (error) {
     console.error("Failed to load products:", error);
-    gallery.catalog = [createMessageElement("Не удалось загрузить товары. Пожалуйста, попробуйте позже.")];
+    gallery.catalog = [
+      createMessageElement(
+        "Не удалось загрузить товары. Пожалуйста, попробуйте позже."
+      ),
+    ];
   }
 }
 
@@ -102,7 +105,7 @@ events.on("catalog:changed", () => {
     cardView.category = product.category;
     cardView.title = product.title;
     cardView.price = product.price;
-    cardView.productId = product.id;  // ← Устанавливаем ID через сеттер класса (а не в dataset)
+    cardView.productId = product.id;
 
     // Проверяем и устанавливаем изображение
     if (product.image) {
@@ -114,7 +117,7 @@ events.on("catalog:changed", () => {
       }
     }
 
-    return cardView.render({ id: product.id });  // ← Передаем ID при рендере
+    return cardView.render({ id: product.id });
   });
 
   gallery.catalog = catalogItems;
@@ -133,18 +136,18 @@ function createMessageElement(message: string): HTMLElement {
 }
 
 // Выбор карточки (открытие превью) - ИСПРАВЛЕННЫЙ обработчик
-events.on("product:select", (data: { id: string }) => {  // ← Теперь получаем только ID
+events.on("product:select", (data: { id: string }) => {
   console.log("Product selected with id:", data.id);
-  
+
   // Получаем товар из модели по ID
   const product = catalogModel.getProductById(data.id);
   if (!product) {
     console.error("Product not found:", data.id);
     return;
   }
-  
+
   // Сохраняем только ID текущего товара
-  currentPreviewProductId = product.id; // ← Сохраняем только ID
+  currentPreviewProductId = product.id;
 
   const previewElement = cloneTemplate(cardPreviewTemplate);
   const previewCard = new PreviewItem(events, previewElement);
@@ -175,14 +178,14 @@ events.on("product:select", (data: { id: string }) => {  // ← Теперь п�
 
 // Переключение товара в корзине
 events.on("product:toggle-basket", () => {
-  if (!currentPreviewProductId) return; // ← Проверяем ID
-    
+  if (!currentPreviewProductId) return;
+
   // Получаем товар по сохраненному ID
   const product = catalogModel.getProductById(currentPreviewProductId);
   if (!product) return;
-    
+
   console.log("Toggling basket for product:", product.id);
-    
+
   if (cartModel.hasItem(product.id)) {
     cartModel.removeItem(product);
     console.log("Product removed from cart");
@@ -192,7 +195,7 @@ events.on("product:toggle-basket", () => {
   }
 
   // Обновляем кнопку в превью (проверяем снова текущее состояние)
-  const inCart = cartModel.hasItem(product.id); // ← Используем product.id
+  const inCart = cartModel.hasItem(product.id);
   const previewButton = document.querySelector(".card__button");
   if (previewButton) {
     (previewButton as HTMLButtonElement).textContent = inCart
@@ -229,9 +232,9 @@ events.on("basket:open", () => {
       basketItem.title = product.title;
       basketItem.price = product.price;
       basketItem.index = index + 1;
-      basketItem.productId = product.id;  // ← Устанавливаем ID через сеттер
+      basketItem.productId = product.id;
 
-      itemElements.push(basketItem.render({ productId: product.id }));  // ← Передаем ID при рендере
+      itemElements.push(basketItem.render({ productId: product.id }));
     });
 
     basketView.items = itemElements;
@@ -249,7 +252,7 @@ events.on("basket:open", () => {
 // Удаление товара из корзины
 events.on("basket:remove", (data: { productId: string }) => {
   console.log("Removing product from basket:", data.productId);
-  
+
   // Находим товар в каталоге по ID
   const product = catalogModel.getProductById(data.productId);
   if (product) {
@@ -365,7 +368,7 @@ events.on("contacts:submit", async () => {
       // Очищаем данные
       cartModel.clear();
       buyerModel.clearData();
-      currentPreviewProductId = null; // ← Очищаем ID текущего товара
+      currentPreviewProductId = null;
 
       modal.content = successView.render();
     } catch (error) {
@@ -396,7 +399,7 @@ function updateFormValidation(): void {
 // Закрытие модального окна
 events.on("modal:close", () => {
   modal.close();
-  currentPreviewProductId = null; // ← Очищаем ID при закрытии модального окна
+  currentPreviewProductId = null;
 });
 
 // Закрытие экрана успеха
@@ -404,7 +407,7 @@ events.on("success:close", () => {
   modal.close();
   // Сбрасываем формы для следующего заказа
   buyerModel.clearData();
-  currentPreviewProductId = null; // ← Очищаем ID
+  currentPreviewProductId = null;
 });
 
 // Загружаем товары при запуске приложения

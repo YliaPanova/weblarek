@@ -18,6 +18,4 @@ export class ProductCatalog {
   getProductById(id: string): IProduct | null {
     return this.products.find((product) => product.id === id) || null;
   }
-  
-  // Убираем методы для selectedProduct, так как это состояние UI
 }

@@ -7,7 +7,6 @@ interface ICardActions {
   onClick?: (event: MouseEvent) => void;
 }
 
-// Базовый класс не меняется, но он работает с любым типом данных
 export class ProductCard<T> extends Component<T> {
   protected _category: HTMLElement | null = null;
   protected _title: HTMLElement;

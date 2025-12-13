@@ -28,7 +28,6 @@ export class Modal extends Component<IModalData> {
       }
     });
 
-    // Обработка события закрытия извне
     events.on("modal:force-close", () => {
       if (this.isOpen) {
         this.container.classList.remove("modal_active");
@@ -53,7 +52,6 @@ export class Modal extends Component<IModalData> {
   close(): void {
     this.toggleClass(this.container, "modal_active", false);
     this._content.innerHTML = "";
-    // Не эмитим событие, чтобы избежать рекурсии
   }
 
   render(data: IModalData): HTMLElement {
