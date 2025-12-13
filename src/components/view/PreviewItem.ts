@@ -1,8 +1,17 @@
 import { ProductCard } from "./ProductCard";
 import { IEvents } from "../base/Events";
-import { IProduct } from "../../types";
 
-export class PreviewItem extends ProductCard<IProduct> {
+// Создаем интерфейс только для данных отображения
+interface IPreviewItemData {
+  category: string;
+  title: string;
+  price: number | null;
+  image?: string;
+  buttonText?: string;
+  buttonDisabled?: boolean;
+}
+
+export class PreviewItem extends ProductCard<IPreviewItemData> {  // ← Используем свой интерфейс
   protected _button: HTMLButtonElement | null = null;
 
   constructor(events: IEvents, container: HTMLElement) {
@@ -12,7 +21,7 @@ export class PreviewItem extends ProductCard<IProduct> {
     if (this._button) {
       this._button.addEventListener("click", (event: Event) => {
         event.preventDefault();
-        events.emit("product:toggle-basket");
+        events.emit("product:toggle-basket");  // ← Не передаем данные, они есть в модели
       });
     }
   }

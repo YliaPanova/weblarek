@@ -3,7 +3,6 @@ import { IEvents } from "../base/Events";
 
 export class ProductCatalog {
   private products: IProduct[] = [];
-  private selectedProduct: IProduct | null = null;
 
   constructor(private events: IEvents) {}
 
@@ -19,13 +18,6 @@ export class ProductCatalog {
   getProductById(id: string): IProduct | null {
     return this.products.find((product) => product.id === id) || null;
   }
-
-  setSelectedProduct(product: IProduct): void {
-    this.selectedProduct = product;
-    this.events.emit("product:selected", { product });
-  }
-
-  getSelectedProduct(): IProduct | null {
-    return this.selectedProduct;
-  }
+  
+  // Убираем методы для selectedProduct, так как это состояние UI
 }

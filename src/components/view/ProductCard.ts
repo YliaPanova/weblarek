@@ -7,6 +7,7 @@ interface ICardActions {
   onClick?: (event: MouseEvent) => void;
 }
 
+// Базовый класс не меняется, но он работает с любым типом данных
 export class ProductCard<T> extends Component<T> {
   protected _category: HTMLElement | null = null;
   protected _title: HTMLElement;
@@ -29,7 +30,6 @@ export class ProductCard<T> extends Component<T> {
       const clickHandler = (event: MouseEvent) => {
         event.preventDefault();
         const target = event.target as HTMLElement;
-        // Не запускать обработчик, если кликнули на кнопку внутри карточки
         if (!target.closest(".card__button")) {
           actions.onClick!(event);
         }
@@ -46,9 +46,7 @@ export class ProductCard<T> extends Component<T> {
   set category(value: string) {
     if (this._category) {
       this.setText(this._category, value);
-
       this._category.className = "card__category";
-
       const categoryClass = categoryMap[value as keyof typeof categoryMap];
       if (categoryClass) {
         this._category.classList.add(categoryClass);
@@ -71,7 +69,6 @@ export class ProductCard<T> extends Component<T> {
 
       this._image.onerror = () => {
         console.warn(`Failed to load image: ${fullImageUrl}`);
-
         this._image!.src = "src/images/placeholder.jpg";
       };
     }
